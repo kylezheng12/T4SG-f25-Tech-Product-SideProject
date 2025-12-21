@@ -35,7 +35,7 @@ const cards = data;
  * @param params - Object containing route parameters
  * @param params.id - The task ID from the URL (automatically passed by Next.js)
  *
- * Route: /tasks/[id]
+ * Route: /card/[id]
  */
 export default function TaskDetail({ params }: { params: { id: string } }) {
   // Convert URL parameter from string to number for database lookup
