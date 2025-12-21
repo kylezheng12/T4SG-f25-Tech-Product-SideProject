@@ -6,6 +6,7 @@ import React, { useState } from "react";
 const cards = [1, 2, 3, 4, 5, 6];
 
 
+<<<<<<< Updated upstream
 export default function Home() {
   const [selectedCard, setSelectedCard] = useState<number | null>(null);
 
@@ -99,6 +100,13 @@ export default function Home() {
           </div>
         </div>
       )}
+=======
+export default function Dashboard() {
+  return (
+    <>
+      <TypographyH2>Home page</TypographyH2>
+      <TypographyP>Please log in to access the dashboard</TypographyP>
+>>>>>>> Stashed changes
     </>
   );
 }
