@@ -69,8 +69,7 @@ export default async function Dashboard() {
 
   // Main dashboard view
   return (
-    <main className="min-h-screen bg-slate-100 dark:bg-slate-900 p-4">
-
+    <main className="min-h-screen bg-slate-100 p-4 dark:bg-slate-900">
       {/*
         Page Header
         Provides context about the dashboard's purpose
@@ -86,7 +85,7 @@ export default async function Dashboard() {
         Rounded container that houses the project grid
         Background adapts to light/dark mode
       */}
-      <section className="rounded-xl bg-white dark:bg-slate-800 p-4">
+      <section className="rounded-xl bg-white p-4 dark:bg-slate-800">
         <h2 className="mb-3 text-lg font-semibold dark:text-white">Nonprofit Canvas</h2>
 
         {/*
@@ -100,7 +99,7 @@ export default async function Dashboard() {
           {cards.map((card) => (
             <div
               key={card.id}
-              className="flex flex-col rounded-lg border border-slate-300 dark:border-slate-600 bg-white dark:bg-slate-700 p-4 shadow-sm transition-shadow hover:shadow-md"
+              className="flex flex-col rounded-lg border border-slate-300 bg-white p-4 shadow-sm transition-shadow hover:shadow-md dark:border-slate-600 dark:bg-slate-700"
             >
               {/*
                 Project Card Structure
@@ -138,11 +137,11 @@ export default async function Dashboard() {
               {/*
                 Navigation to Detail Page
                 Uses Next.js Link for client-side navigation (faster page transitions)
-                Template literal constructs dynamic URL: /tasks/1, /tasks/2, etc.
+                Template literal constructs dynamic URL: /card/1, /card/2, etc.
                 variant="outline": Button style with border and transparent background
                 w-full: Button spans full width of card
               */}
-              <Link href={`/tasks/${card.id}`}>
+              <Link href={`/card/${card.id}`}>
                 <Button variant="outline" className="w-full">
                   View Details
                 </Button>
@@ -154,4 +153,3 @@ export default async function Dashboard() {
     </main>
   );
 }
-

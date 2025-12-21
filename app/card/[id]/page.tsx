@@ -1,110 +1,151 @@
+import { Button } from "@/components/ui/button";
+import { TypographyH2, TypographyP } from "@/components/ui/typography";
+import { createClient } from "@supabase/supabase-js";
 import Link from "next/link";
 
 /**
- * Card View Template Page
- *
- * This is a reusable template page for displaying card-based content.
- * The [id] in the folder structure creates a dynamic route in Next.js.
- *
- * Example: Visiting /card/5 will render this component with cardId = "5"
- *
- * Use this template to create custom card views for different content types
- * like team members, projects, resources, etc.
- *
- * @param params - Route parameters object from Next.js
- * @param params.id - The card identifier from the URL
- *
- * Route: /card/[id]
+ * Initialize Supabase client for database access
+ * Uses public environment variables that are safe to expose in the browser
+ * The '!' tells TypeScript these variables will definitely exist
  */
-export default function CardView({ params }: { params: { id: string } }) {
-  // Extract the card ID from the route parameters
-  const cardId = params.id;
+const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL!;
+const supabaseAnonKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!;
+const supabase = createClient(supabaseUrl, supabaseAnonKey);
 
+/**
+ * Fetch all projects from the database at build time
+ * This runs on the server before the page renders
+ * Data is fetched once and shared across all task detail pages
+ */
+const { data, error } = await supabase.from("projects").select("*");
+if (error) {
+  throw error;
+}
+
+const cards = data;
+
+/**
+ * Task Detail Page Component
+ *
+ * This page displays comprehensive information about a single nonprofit project/task.
+ * The [id] in the folder name makes this a dynamic route in Next.js.
+ *
+ * Example: Visiting /tasks/3 will show details for the project with id=3
+ *
+ * @param params - Object containing route parameters
+ * @param params.id - The task ID from the URL (automatically passed by Next.js)
+ *
+ * Route: /tasks/[id]
+ */
+export default function TaskDetail({ params }: { params: { id: string } }) {
+  // Convert URL parameter from string to number for database lookup
+  const taskId = parseInt(params.id);
+
+  // Search through all projects to find the one matching this ID
+  const task = cards.find((card) => card.id === taskId);
+
+  /**
+   * Error handling: Show user-friendly message if task doesn't exist
+   * This can happen if user manually types an invalid ID in the URL
+   */
+  if (!task) {
+    return (
+      <main className="min-h-screen bg-slate-100 p-4 dark:bg-slate-900">
+        <div className="mx-auto max-w-2xl rounded-xl bg-white p-6 dark:bg-slate-800">
+          <TypographyH2>Task Not Found</TypographyH2>
+          <TypographyP>The task you're looking for doesn't exist.</TypographyP>
+          <Link href="/">
+            <Button className="mt-4">Back to Home</Button>
+          </Link>
+        </div>
+      </main>
+    );
+  }
+
+  // Main task detail view
   return (
-    <main className="min-h-screen bg-slate-100 dark:bg-slate-900 p-4">
+    <main className="min-h-screen bg-slate-100 p-4 dark:bg-slate-900">
       {/*
-        Container with max width for better readability on large screens
-        max-w-4xl: Limits content width to prevent overly long lines
-        mx-auto: Centers the container horizontally
+        Content container with max width for readability
+        mx-auto centers the content horizontally
       */}
-      <div className="max-w-4xl mx-auto">
-
+      <div className="mx-auto max-w-2xl rounded-xl bg-white p-6 shadow-sm dark:bg-slate-800">
         {/*
-          Back navigation link
-          inline-flex: Makes the link behave as an inline flex container
-          Includes hover states for both light and dark modes
+          Back navigation button
+          variant="ghost" gives a minimal, text-only appearance
         */}
-        <Link
-          href="/"
-          className="inline-flex items-center text-sm text-slate-600 dark:text-slate-300 hover:text-slate-900 dark:hover:text-white mb-6"
-        >
-          ← Back to Home
+        <Link href="/">
+          <Button variant="ghost" className="mb-4">
+            ← Back to Tasks
+          </Button>
         </Link>
 
+        {/* Project title using typography component for consistent styling */}
+        <TypographyH2 className="mb-2">{task.title}</TypographyH2>
+
         {/*
-          Main card container
-          rounded-xl: Large border radius for modern appearance
-          Uses dark mode color variants for background
+          Dynamic status badge
+          Conditionally applies green colors for "open" status, red for "closed"
+          Uses template literals with ternary operator for class selection
         */}
-        <div className="bg-white dark:bg-slate-800 rounded-xl p-8">
-          <h1 className="text-2xl font-bold dark:text-white mb-6">Card View #{cardId}</h1>
+        <div className="mb-4">
+          <span
+            className={`inline-block rounded px-3 py-1 text-sm font-medium ${
+              task.status === "open" ? "bg-green-100 text-green-800" : "bg-red-100 text-red-800"
+            }`}
+          >
+            {task.status}
+          </span>
+        </div>
 
-          {/*
-            Content sections wrapper
-            space-y-6: Adds vertical spacing between child elements
-          */}
-          <div className="space-y-6">
+        {/*
+          Organization name display
+          Uses dark mode variants (dark:text-slate-300) to ensure readability in both themes
+        */}
+        <div className="mb-4">
+          <p className="text-sm text-slate-600 dark:text-slate-300">
+            <span className="font-semibold">Organization:</span> {task.orgname}
+          </p>
+        </div>
 
-            {/*
-              Image placeholder section
-              border-dashed: Creates a dashed border to indicate placeholder status
-              h-64: Fixed height of 16rem (256px)
-              overflow-hidden: Prevents content from exceeding rounded corners
-              flex/items-center/justify-center: Centers the placeholder text
-            */}
-            <div className="rounded-lg border border-dashed border-slate-300 dark:border-slate-600 bg-slate-50 dark:bg-slate-700 overflow-hidden">
-              <div className="h-64 flex items-center justify-center text-slate-500 dark:text-slate-400">
-                <p className="text-sm">Image placeholder - Add your image here</p>
-              </div>
-            </div>
+        {/*
+          Full project description
+          Uses TypographyP component for proper paragraph spacing and line height
+        */}
+        <div className="mb-6">
+          <TypographyP className="text-base leading-relaxed">{task.description}</TypographyP>
+        </div>
 
-            {/*
-              Title and description section
-              Simple text content with semantic heading hierarchy
-            */}
-            <div>
-              <h2 className="text-xl font-semibold dark:text-white mb-2">Card Title</h2>
-              <p className="text-slate-600 dark:text-slate-300">Add a title or description here</p>
-            </div>
-
-            {/*
-              Main content area with dashed border
-              Provides a clear visual boundary for content placement
-              Includes padding (p-6) for internal spacing
-            */}
-            <div className="rounded-lg border border-dashed border-slate-300 dark:border-slate-600 bg-slate-50 dark:bg-slate-700 p-6">
-              <p className="text-slate-500 dark:text-slate-400 text-sm mb-2">Content Area</p>
-              <p className="text-slate-600 dark:text-slate-300">This view is currently blank - experiment with adding content here!</p>
-            </div>
-
-            {/*
-              Two-column grid layout for additional sections
-              grid-cols-2: Creates 2 equal-width columns
-              gap-4: Adds spacing between grid items
-              Responsive design: Could be modified with breakpoints (e.g., md:grid-cols-2)
-            */}
-            <div className="grid grid-cols-2 gap-4">
-              <div className="rounded-lg border border-dashed border-slate-300 dark:border-slate-600 bg-slate-50 dark:bg-slate-700 p-4">
-                <p className="text-slate-500 dark:text-slate-400 text-sm">Section 1</p>
-              </div>
-              <div className="rounded-lg border border-dashed border-slate-300 dark:border-slate-600 bg-slate-50 dark:bg-slate-700 p-4">
-                <p className="text-slate-500 dark:text-slate-400 text-sm">Section 2</p>
-              </div>
-            </div>
+        {/*
+          Skills section: Display all required skills as pill-shaped badges
+          Uses .map() to iterate over the reqskills array
+          flex-wrap ensures tags wrap to next line on small screens
+        */}
+        <div className="mb-6">
+          <h3 className="mb-2 font-semibold dark:text-white">Required Skills:</h3>
+          <div className="flex flex-wrap gap-2">
+            {task.reqskills.map((skill: string, index: number) => (
+              <span
+                key={index}
+                className="rounded-full bg-slate-100 px-3 py-1 text-sm text-slate-700 dark:bg-slate-700 dark:text-slate-200"
+              >
+                {skill}
+              </span>
+            ))}
           </div>
         </div>
+
+        {/*
+          Call-to-action button
+          - Full width for better mobile UX (w-full)
+          - Automatically disabled when task status is "closed"
+          - Text changes based on status to give clear feedback
+          - Disabled state prevents users from signing up for unavailable tasks
+        */}
+        <Button className="w-full" disabled={task.status === "closed"}>
+          {task.status === "open" ? "Sign Up for This Task" : "Task Closed"}
+        </Button>
       </div>
     </main>
   );
 }
-

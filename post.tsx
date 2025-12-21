@@ -23,7 +23,7 @@ const { data, error } = await supabase
       reqskills: ["Database", "SQL", "Data Migration"],
     },
   ])
-  .select(); // returns inserted rows
+  .select();
 data;
 if (error) {
   throw error;
