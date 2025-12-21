@@ -15,45 +15,6 @@ if (error) {
 
 const cards = data;
 
-const cards1 = [
-  {
-    id: 1,
-    title: "Website Redesign",
-    description: "Need help updating our nonprofit website",
-    status: "open",
-  },
-  {
-    id: 2,
-    title: "Database Migration",
-    description: "Moving from Excel to a proper database system",
-    status: "open",
-  },
-  {
-    id: 3,
-    title: "Mobile App Development",
-    description: "Creating an app for volunteer coordination",
-    status: "closed",
-  },
-  {
-    id: 4,
-    title: "Email Automation",
-    description: "Setting up automated email campaigns",
-    status: "open",
-  },
-  {
-    id: 5,
-    title: "Data Analytics Dashboard",
-    description: "Visualizing donor and volunteer data",
-    status: "open",
-  },
-  {
-    id: 6,
-    title: "Security Audit",
-    description: "Reviewing our systems for vulnerabilities",
-    status: "closed",
-  },
-];
-cards1;
 export default async function Dashboard() {
   // Create supabase server component client and obtain user session from Supabase Auth
   const supabase = createServerSupabaseClient();
