@@ -40,28 +40,28 @@ export default async function Dashboard() {
   userEmail;
 
   return (
-    <main className="min-h-screen bg-slate-100 p-4">
+    <main className="min-h-screen bg-slate-100 dark:bg-slate-900 p-4">
       {/* Header section */}
       <header className="mb-4">
-        <h1 className="text-2xl font-bold">Tech Product Hub</h1>
-        <p className="text-sm text-slate-600">Canvas-style dashboard</p>
+        <h1 className="text-2xl font-bold dark:text-white">Tech Product Hub</h1>
+        <p className="text-sm text-slate-600 dark:text-slate-300">Canvas-style dashboard</p>
       </header>
 
       {/* Container for the grid */}
-      <section className="rounded-xl bg-white p-4">
-        <h2 className="mb-3 text-lg font-semibold">Nonprofit Canvas</h2>
+      <section className="rounded-xl bg-white dark:bg-slate-800 p-4">
+        <h2 className="mb-3 text-lg font-semibold dark:text-white">Nonprofit Canvas</h2>
 
         <div className="grid gap-4 sm:grid-cols-2 md:grid-cols-3">
           {cards.map((card) => (
             <div
               key={card.id}
-              className="flex flex-col rounded-lg border border-slate-300 bg-white p-4 shadow-sm transition-shadow hover:shadow-md"
+              className="flex flex-col rounded-lg border border-slate-300 dark:border-slate-600 bg-white dark:bg-slate-700 p-4 shadow-sm transition-shadow hover:shadow-md"
             >
               {/* Card Title */}
-              <h3 className="mb-2 text-lg font-semibold">{card.title}</h3>
+              <h3 className="mb-2 text-lg font-semibold dark:text-white">{card.title}</h3>
 
               {/* Card Description */}
-              <p className="mb-3 flex-grow text-sm text-slate-600">{card.short_description}</p>
+              <p className="mb-3 flex-grow text-sm text-slate-600 dark:text-slate-300">{card.short_description}</p>
 
               {/* Status Badge */}
               <div className="mb-3">
